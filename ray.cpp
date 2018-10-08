@@ -17,4 +17,4 @@ class Ray{
         Vec3 getOrigin() const;
 
         Vec3 getDirection() const;
-}
+};
