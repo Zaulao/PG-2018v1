@@ -8,7 +8,11 @@ class Camera{
     
     
     public:
-        Camera(Vec3 position, Vec3 target, Vec3 up, double fov, double near)
+        Camera(Vec3 position, Vec3 target, Vec3 up, double fov, double near) {
+            this->position = position;
+
+            
+        }
 
         Ray GetRay(double x, double y, int width, int height) const;
 
