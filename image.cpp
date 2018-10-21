@@ -1,3 +1,4 @@
+#include <fstream>
 #include <vector>
 #include "Vec3.hpp"
 
@@ -12,17 +13,41 @@ class Image{
 		Image(int width, int height) {
 			this->width = width;
 			this->height = height;
-			buffer.reserve(width * height);
+			Vec3 <int> zero;
+			for( int i = 0; i < width * height; i++) {
+				this->buffer.push_back(zero);
+			}
 		}
 
 		void SetPixel(int x, int y, const Vec3<int> &color) {
-			buffer[ y * width + x] = color;
+			this->buffer[ y * width + x] = color;
 		}
 
 		Vec3<int> GetPixel(int x, int y) {
-			return buffer[ y * width + x];
+			return this->buffer[ y * width + x];
 		}
 
-		void SaveAsPBM(const string& filePath) const;
+		Vec3<int> GetPixelOneCoord(int i) {
+			return this->buffer[ i ];
+		}
+
+		void SetPixelOneCoord(int i, const Vec3<int> &color) {
+			this->buffer[ i ] = color;
+		}
+
+		void SaveAsPPM() {
+			int r, g, b;
+			Vec3 <int> bit;
+			FILE *f = fopen("image.ppm", "w");
+			cout << "ok" << endl;
+			fprintf(f, "P6\n%d %d\n%d\n", this->width, this->height, 1);
+			for (int i=0; i < this->height * this->width; i++) {
+				bit = this->GetPixelOneCoord(i);
+				r = bit.getX();
+				g = bit.getY();
+				b = bit.getZ();
+				fprintf(f,"%d %d %d ", r, g, b);
+			}
+		}
 
 };

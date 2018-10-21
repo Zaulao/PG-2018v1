@@ -12,14 +12,21 @@ int main(){
     // vetor.display();
     // vetor.normalise();
     // vetor.display();
-    Vec3 <int> color(20, 30, 40);
+    Vec3 <int> color(255, 0, 0);
     // color.display();
-    Image img(5, 5);
-    img.SetPixel(1, 1, color);
-    for(int i = 0; i < 5; i++) {
-        for(int c = 0; c < 5; c++) {
-            img.GetPixel(i, c).display();
-        }
+    Image img(2, 2);
+    for(int i = 0; i < 4; i++) {
+        // for( int c = 15; c < 35; c++) {
+            img.SetPixelOneCoord(i, color);
+
+        // }
     }
+    // for(int i = 0; i < 50; i++) {
+    //     for(int c = 0; c < 50; c++) {
+    //         cout << img.GetPixel(i, c).getX() << " ";
+    //     }
+    //     cout << endl;
+    // }
+    img.SaveAsPPM();
     return 0;
 }
