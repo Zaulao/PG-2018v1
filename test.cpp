@@ -14,8 +14,8 @@ int main(){
     // vetor.display();
     Vec3 <int> color(255, 0, 0);
     // color.display();
-    Image img(2, 2);
-    for(int i = 0; i < 4; i++) {
+    Image img(1000, 600);
+    for(int i = 0; i < 600000; i++) {
         // for( int c = 15; c < 35; c++) {
             img.SetPixelOneCoord(i, color);
 
