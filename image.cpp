@@ -39,11 +39,10 @@ class Image{
 			int r, g, b;
 			Vec3 <int> bit;
 			FILE *f = fopen("image.ppm", "w");
-			cout << "ok" << endl;
 			fprintf(f, "P3\n%d %d\n%d\n", this->width, this->height, 1);
 			for (int i=0; i < this->width; i++) {
 				for ( int c = 0; c < this->height; c++) {
-					bit = this->GetPixelOneCoord(i);
+					bit = this->GetPixel(i, c);
 					r = bit.getX();
 					g = bit.getY();
 					b = bit.getZ();

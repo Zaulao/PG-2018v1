@@ -48,7 +48,9 @@ template <class T> class Vec3
         {
             x = y = z = 0;
         }
- 
+
+        // Method to get the length of the vector
+
         // Method to normalise a vector
         void normalise()
         {
