@@ -15,6 +15,7 @@ class Camera{
             up.normalise();
             target.operator*(-1);
             this->axisZ = target;
+            target.operator*(-1);
             this->axisX = Vec3<double>::crossProduct(target, up);
             this->axisY = Vec3<double>::crossProduct(this->axisX, target);
             this->fov = fov;

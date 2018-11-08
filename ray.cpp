@@ -16,7 +16,8 @@ class Ray{
         }
 
         Vec3 <double> sample (const double& t) {
-            return this->direction.operator*(t);
+            Vec3 <double> desloc = this->direction.operator*(t);
+            return this->origin.operator+(desloc);
         }
 
         Vec3 <double> getOrigin() {
