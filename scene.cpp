@@ -1,10 +1,11 @@
 #pragma once
-#include "Object.h"
-#include "ObjectIntersection.h"
+#include "object.cpp"
+#include "objectIntersection.cpp"
 #include <vector>
 using namespace std;
 class Scene{
-    private: vector<Object*> objects;
+    private:
+        vector <Object*> objects;
 
     public:
 

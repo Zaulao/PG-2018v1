@@ -1,27 +1,43 @@
 #pragma once
 
-#include "Vec3.h"
-#include "Ray.h"
-#include "ObjectIntersection.h"
+#include "ray.cpp"
+#include "objectIntersection.cpp"
 #include <cmath>
 
-class Geometry{
-    public:
-        virtual bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const = 0;
+// class Geometry{
+//     public:
+//         virtual bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const = 0;
 
-        virtual Vec3 getPoint() cont = 0;
+//         virtual Vec3 <double> getPoint();
 
-};
+// };
 
-class Sphere: public Geometry{
+class Sphere {
     private:
-        Vec3 center;
+        Vec3 <double> center;
         double radius;
     
     public:
-        Sphere(Vec3 center, double radius);
 
-        bool intersect(const Ray& r, ObjectIntersection* info = nullptr) const override;
 
-        Vec3 getPoint() const override;
+        Sphere() {
+            Vec3 <double> a;
+            this->center = a;
+            this->radius = 0;
+        }
+    
+        Sphere(Vec3 <double> center, double radius) {
+            this->center = center;
+            this->radius = radius;
+        }
+
+        //bool intersect(const Ray& r, ObjectIntersection* info = nullptr);
+
+        Vec3 <double> getPoint(){
+            return this->center;
+        }
+
+        double getRadius() {
+            return this->radius;
+        }
 }
