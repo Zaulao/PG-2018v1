@@ -10,9 +10,9 @@ class Image{
 		vector <Vec3<int> > buffer;
 	
 	public:
-		Image(int width, int height) {
-			this->width = width;
-			this->height = height;
+		Image(double width, double height) {
+			this->width = int (width);
+			this->height = int (height);
 			Vec3 <int> zero;
 			for( int i = 0; i < width * height; i++) {
 				this->buffer.push_back(zero);
