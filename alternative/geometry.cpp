@@ -25,15 +25,15 @@ class Sphere {
 
         bool intersect(Ray &r) {
             double t;
-            Vec3 <double> distance = r->getOrigin() - this->center;
-            Vec3 <double> a = dotProduct(r.getDirection(), r.getDirection());
-            Vec3 <double> b = 2 * dotProduct(distance, r.getDirection());
-            Vec3 <double> c = dotProduct(distance, distance) - this->radius * this->radius;
+            Vec3 <double> distance = r.getOrigin().operator-(this->center);
+            double a = Vec3<double>::dotProduct(r.getDirection(), r.getDirection());
+            double b = 2 * Vec3<double>::dotProduct(distance, r.getDirection());
+            double c = Vec3<double>::dotProduct(distance, distance) - this->radius * this->radius;
             double delta = b * b - 4 * a * c;
             return (delta > 0);
         }
 
-        Vec3 <double> color(const Ray& r) {
+        Vec3 <double> color(Ray &r) {
             Vec3 <double> white(255, 255, 255);
             Vec3 <double> red(255, 0, 0);
             if(intersect(r)) {
