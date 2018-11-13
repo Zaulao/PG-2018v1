@@ -22,19 +22,25 @@ class Camera{
             this->aspect = aspect;
             target.normalise();
             up.normalise();
-            target.operator*(-1);
             this->axisZ = target;
-            target.operator*(-1);
-            this->axisX = Vec3<double>::crossProduct(target, up);
-            this->axisY = Vec3<double>::crossProduct(this->axisX, target);
+            this->axisX = Vec3<double>::crossProduct(up, target);
+            this->axisY = Vec3<double>::crossProduct(target, this->axisX);
             this->near = near;
+        }
+
+        double getHalf_h() {
+            return this->half_h;
+        }
+
+        double getHalf_w() {
+            return this->half_w;
         }
 
         Ray* GetRay(double x, double y){
             Vec3 <double> point = this->position;
             point.setZ(point.getZ() - this->near);
-            point.setX(point.getX() + (x - 0.5) * this->half_w * 2);
-            point.setY(point.getY() + (y - 0.5) * this->half_h * 2);
+            point.setX((point.getX() - this->half_w) + x);
+            point.setY((point.getY() - this->half_h) + y);
             Vec3 <double> dir = point.operator-(this->position);
             dir.normalise();
             Ray *ray = new Ray(this->position, dir);

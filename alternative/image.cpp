@@ -19,7 +19,7 @@ class Image{
 			}
 		}
 
-		void SetPixel(int x, int y, const Vec3<int> &color) {
+		void SetPixel(int x, int y, Vec3<int> color) {
 			this->buffer[ y * width + x] = color;
 		}
 
@@ -33,6 +33,14 @@ class Image{
 
 		void SetPixelOneCoord(int i, const Vec3<int> &color) {
 			this->buffer[ i ] = color;
+		}
+
+		int getWidth() {
+			return this->width;
+		}
+
+		int getHeight() {
+			return this->height;
 		}
 
 		void SaveAsPPM() {
