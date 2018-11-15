@@ -7,7 +7,7 @@ using namespace std;
 class Camera{
     private:
         Vec3 <double> position, axisX, axisY, axisZ;
-        double fov, aspect, near, half_h, half_w;
+        double fov, aspect, near, vertical, horizontal;
     
     
     public:
@@ -15,8 +15,8 @@ class Camera{
             double theta = fov * PI / 180.0;
             double half_h = near * tan (theta/2);
             double half_w = half_h * aspect;
-            this->half_h = half_h;
-            this->half_w = half_w;
+            this->vertical = half_h * 2;
+            this->horizontal = half_w * 2;
             this->position = position;
             this->fov = fov;
             this->aspect = aspect;
@@ -28,21 +28,22 @@ class Camera{
             this->near = near;
         }
 
-        double getHalf_h() {
-            return this->half_h;
+        double getHorizontal() {
+            return this->horizontal;
         }
 
-        double getHalf_w() {
-            return this->half_w;
+        double getVertical() {
+            return this->vertical;
         }
 
-        Ray* GetRay(double x, double y){
+        Ray* GetRay(double x, double y, int width, int height){
             Vec3 <double> point = this->position;
+            double camPosX = x * this->horizontal / width;
+            double camPosY = y * this->vertical / height;
             point.setZ(point.getZ() - this->near);
-            point.setX((point.getX() - this->half_w) + x);
-            point.setY((point.getY() - this->half_h) + y);
+            point.setX((point.getX() - this->horizontal/2) + camPosX);
+            point.setY((point.getY() - this->vertical/2) + camPosY);
             Vec3 <double> dir = point.operator-(this->position);
-            dir.normalise();
             Ray *ray = new Ray(this->position, dir);
             return ray;
         }
