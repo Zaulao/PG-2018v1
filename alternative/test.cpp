@@ -19,21 +19,18 @@ int main(){
     Vec3 <double> camPos(0, 0, 0);
     Vec3 <double> camTarget(0, 0, -1);
     Vec3 <double> camUp(0, 1, 0);
-    Vec3 <double> Ecenter(0, 0, -10);
-    int fov = 120;
+    Vec3 <double> Ecenter(0, 0, -5);
+    int fov = 90;
     double aspect = 1.25;
-    double near = 10;
+    double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(cam->getHalf_w() * 2, cam->getHalf_h() * 2);
-    for(int i = 0; i < img->getWidth() * img->getHeight(); i++) {
-        //img->SetPixelOneCoord(i, color);
-    }
+    Image *img = new Image(200, 100);
     Ray *r;
     Vec3 <int> p;
-    Sphere esfera(Ecenter, 5);
+    Sphere esfera(Ecenter, 2);
     for(int i = 0; i < img->getWidth(); i++) {
         for(int j = 0; j < img->getHeight(); j++) {
-            r = cam->GetRay(i, j);
+            r = cam->GetRay(i, j, img->getWidth(), img->getHeight());
             p = esfera.color(r);
             img->SetPixel(i, j, p);
         }

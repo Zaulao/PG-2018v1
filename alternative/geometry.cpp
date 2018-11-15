@@ -35,7 +35,7 @@ class Sphere {
 
         Vec3 <int> color(Ray *r) {
             Vec3 <int> white(255, 255, 255);
-            Vec3 <int> red(255, 0, 0);
+            Vec3 <int> red(0, 0, 0);
             if(intersect(r)) {
                 return white;
             }
