@@ -7,31 +7,31 @@ using namespace std;
 class Image{
 	private:
 		int width, height;
-		vector <Vec3<int> > buffer;
+		vector <Vec3<double> > buffer;
 	
 	public:
 		Image(int width, int height) {
 			this->width = width;
 			this->height = height;
-			Vec3 <int> zero;
+			Vec3 <double> zero;
 			for( int i = 0; i < this->width * this->height; i++) {
 				this->buffer.push_back(zero);
 			}
 		}
 
-		void SetPixel(int x, int y, Vec3<int> color) {
+		void SetPixel(int x, int y, Vec3<double> color) {
 			this->buffer[ y * width + x] = color;
 		}
 
-		Vec3<int> GetPixel(int x, int y) {
+		Vec3<double> GetPixel(int x, int y) {
 			return this->buffer[ y * width + x];
 		}
 
-		Vec3<int> GetPixelOneCoord(int i) {
+		Vec3<double> GetPixelOneCoord(int i) {
 			return this->buffer[ i ];
 		}
 
-		void SetPixelOneCoord(int i, const Vec3<int> &color) {
+		void SetPixelOneCoord(int i, const Vec3<double> &color) {
 			this->buffer[ i ] = color;
 		}
 
@@ -45,15 +45,15 @@ class Image{
 
 		void SaveAsPPM() {
 			int r, g, b;
-			Vec3 <int> bit;
+			Vec3 <double> bit;
 			FILE *f = fopen("image.ppm", "w");
 			fprintf(f, "P3\n%d %d\n%d\n", this->width, this->height, 255);
 			for ( int c = 0; c < this->height; c++) {
 				for (int i=0; i < this->width; i++) {
 					bit = this->GetPixel(i, c);
-					r = bit.getX();
-					g = bit.getY();
-					b = bit.getZ();
+					r = int(bit.getX());
+					g = int(bit.getY());
+					b = int(bit.getZ());
 					fprintf(f,"%d %d %d ", r, g, b);
 				}
 				fprintf(f, "\n");

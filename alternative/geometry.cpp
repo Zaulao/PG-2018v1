@@ -23,22 +23,30 @@ class Sphere {
             this->radius = radius;
         }
 
-        bool intersect(Ray *r) {
+        double intersect(Ray *r) {
             double t;
             Vec3 <double> distance = r->getOrigin().operator-(this->center);
             double a = Vec3<double>::dotProduct(r->getDirection(), r->getDirection());
             double b = 2 * Vec3<double>::dotProduct(distance, r->getDirection());
             double c = Vec3<double>::dotProduct(distance, distance) - (this->radius * this->radius);
             double delta = b * b - 4 * a * c;
-            return (delta > 0);
+            if (delta < 0) {
+                return -1.0;
+            } else {
+                return (-b - sqrt(delta) ) / (2.0 * a);
+            }
         }
 
-        Vec3 <int> color(Ray *r) {
-            Vec3 <int> white(255, 255, 255);
-            Vec3 <int> red(0, 0, 0);
-            if(intersect(r)) {
-                return white;
+        Vec3 <double> color(Ray *r) {
+            double t = intersect(r);
+            if(t > 0.0) {
+                Vec3 <double> N = r->sample(t).operator-(this->center);
+                N.normalise();
+                Vec3 <double> v(0.5 * (N.getX() + 1) * 255, 0.5 * (N.getY() + 1) * 255, 0.5 * (N.getZ() + 1) * 255); 
+                return v;
             }
+            Vec3 <double> white(255, 255, 255);
+            Vec3 <double> red(0, 0, 0);
             return red;
         }
 
