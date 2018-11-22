@@ -14,7 +14,7 @@ int main(){
     // vetor.display();
     // vetor.normalise();
     // vetor.display();
-    Vec3 <int> color(255, 0, 0);
+    Vec3 <double> color(255, 0, 0);
     // color.display();
     Vec3 <double> camPos(0, 0, 0);
     Vec3 <double> camTarget(0, 0, -1);
@@ -24,12 +24,12 @@ int main(){
     double aspect = 1.25;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(200, 100);
+    Image *img = new Image(400, 300);
     Ray *r;
-    Vec3 <int> p;
+    Vec3 <double> p;
     Sphere esfera(Ecenter, 2);
-    for(int i = 0; i < img->getWidth(); i++) {
-        for(int j = 0; j < img->getHeight(); j++) {
+    for(int i = 0; i < 400; i++) {
+        for(int j = 0; j < 300; j++) {
             r = cam->GetRay(i, j, img->getWidth(), img->getHeight());
             p = esfera.color(r);
             img->SetPixel(i, j, p);

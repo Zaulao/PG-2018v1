@@ -44,7 +44,8 @@ class Camera{
             point.setX((point.getX() - this->horizontal/2) + camPosX);
             point.setY((point.getY() - this->vertical/2) + camPosY);
             Vec3 <double> dir = point.operator-(this->position);
-            Ray *ray = new Ray(this->position, dir);
+            dir.normalise();
+            Ray *ray = new Ray(point, dir);
             return ray;
         }
 
