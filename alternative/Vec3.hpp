@@ -208,6 +208,13 @@ template <class T> class Vec3
             y *= value;
             z *= value;
         }
+
+        bool operator==(const Vec3 &vector){
+
+            return x == vector.x &&y == vector.y && z == vector.z;
+            
+            
+        }
  
         // Overloaded multiply operator to multiply a vector by a scalar
         Vec3 operator/(const T &value) const
