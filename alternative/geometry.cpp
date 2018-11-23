@@ -24,7 +24,7 @@ class Sphere {
             this->radius = radius;
         }
 
-        bool intersect(double max, hit_record rec, Ray *r) {
+        bool intersect(double max, Hit_record &rec, Ray *r) {
             Vec3 <double> distance = r->getOrigin().operator-(this->center);
             double a = Vec3<double>::dotProduct(r->getDirection(), r->getDirection());
             double b = 2 * Vec3<double>::dotProduct(distance, r->getDirection());
@@ -32,10 +32,10 @@ class Sphere {
             double delta = b * b - 4 * a * c;
             if (delta > 0) {
                 double temp = (-b - sqrt(delta) ) / (2.0 * a);
-                if( temp< max){
+                if( temp < max){
                     rec.t = temp;
                     rec.p = r->sample(temp);
-                    Vec3 <double> op = rec.p.operator-(center);
+                    Vec3 <double> op = rec.p.operator-(this->center);
                     op.normalise();
                     rec.normal = op;
                     return true;
@@ -44,7 +44,7 @@ class Sphere {
                 if( temp < max){
                     rec.t = temp;
                     rec.p = r->sample(temp);
-                    Vec3 <double> op = rec.p.operator-(center);
+                    Vec3 <double> op = rec.p.operator-(this->center);
                     op.normalise();
                     rec.normal = op;
                     return true;
