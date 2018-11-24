@@ -3,28 +3,63 @@
 #include "geometry.cpp"
 #include "camera.cpp"
 #include "ray.cpp"
+#include "cmath"
 
 using namespace std;
 
-bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec) {
+bool shadow(Ray *r, vector<Sphere> &objetosCena) {
+    Hit_record record;
+    int lightSource = 9999;
+    for (int i = 0; i < objetosCena.size(); i++) {
+        if (objetosCena.at(i).intersect(lightSource, record, r)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+double diffuse(Vec3 <double> lightSource, Hit_record &rec) {
+    Vec3 <double> intersectLight = lightSource.operator-(rec.p);
+    intersectLight.normalise();
+    double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
+    // return kd * surfaceColor * lightSourceColor * dot;
+    if (dot <= 0) {
+        return 0;
+    } else {
+        return dot;
+    }
+    //IMPLEMENTAR: COR FIXA PARA CADA ESFERA, FONTE DE LUZ E SUA COR
+}
+
+bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, double &perc) {
     Hit_record record;
     bool hitAnything = false;
     double closest = tmax;
+    bool isShadow = false;
     for (int i = 0; i < objetosCena.size(); i++) {
         if (objetosCena.at(i).intersect(closest, record, r)) {
             hitAnything = true;
             closest = record.t;
             rec.normal = record.normal;
             rec.p = record.p;
+            Ray *normal = new Ray(record.p, rec.normal);
+            isShadow = shadow(normal, objetosCena);
         }
+    }
+    if (!isShadow) {
+        Vec3 <double> light(0,0,0);
+        perc = diffuse(light, record);
     }
     return hitAnything;
 }
+
+
 Vec3 <double> color(Ray *r, vector <Sphere> &objetosCena) {
     Hit_record rec;
-    if(hit(r, objetosCena, 99999.0, rec)) {
+    double perc;
+    if(hit(r, objetosCena, 99999.0, rec, perc)) {
         Vec3 <double> N = rec.normal;
-        Vec3 <double> v(0.5 * (N.getX() + 1) * 255, 0.5 * (N.getY() + 1) * 255, 0.5 * (N.getZ() + 1) * 255); 
+        Vec3 <double> v((int) 55 * perc, (int) 55 * perc, (int) 255 * perc); 
         return v;
     } else {
         Vec3 <double> background(123, 45, 140);
