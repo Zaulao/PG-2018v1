@@ -35,7 +35,7 @@ class Sphere {
             double delta = b * b - 4 * a * c;
             if (delta > 0) {
                 double temp = (-b - sqrt(delta) ) / (2.0 * a);
-                if( temp < max){
+                if(temp < max){
                     rec.t = temp;
                     rec.p = r->sample(temp);
                     Vec3 <double> op = rec.p.operator-(this->center);

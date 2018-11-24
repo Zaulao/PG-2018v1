@@ -35,9 +35,9 @@ class Camera{
         double getVertical() {
             return this->vertical;
         }
-
+ 
         Ray* GetRay(double x, double y, int width, int height){
-            Vec3 <double> point = this->position;
+            Vec3 <double> point = Vec3<double>(0,0,0);
             double camPosX = x * this->horizontal / width;
             double camPosY = y * this->vertical / height;
             point.setZ(point.getZ() - this->near);

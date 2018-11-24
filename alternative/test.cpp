@@ -6,6 +6,7 @@
 #include "cmath"
 
 using namespace std;
+typedef Vec3 <double> vec3;
 
 bool shadow(Ray *r, vector<Sphere> &objetosCena) {
     Hit_record record;
@@ -18,8 +19,8 @@ bool shadow(Ray *r, vector<Sphere> &objetosCena) {
     return true;
 }
 
-double diffuse(Vec3 <double> lightSource, Hit_record &rec) {
-    Vec3 <double> intersectLight = lightSource.operator-(rec.p);
+double diffuse(vec3 lightSource, Hit_record &rec) {
+    vec3 intersectLight = lightSource.operator-(rec.p);
     intersectLight.normalise();
     double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
     // return kd * surfaceColor * lightSourceColor * dot;
@@ -31,7 +32,7 @@ double diffuse(Vec3 <double> lightSource, Hit_record &rec) {
     //IMPLEMENTAR: COR FIXA PARA CADA ESFERA, FONTE DE LUZ E SUA COR
 }
 
-bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, double &perc, Sphere light, Vec3 <double> &colores) {
+bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, double &perc, Sphere light, vec3 &colores) {
     Hit_record record;
     bool hitAnything = false;
     double closest = tmax;
@@ -48,22 +49,22 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, do
         }
     }
     if (!isShadow) {
-        //Vec3 <double> light(10, -15, -5);
+        //vec3 light(10, -15, -5);
         perc = diffuse(light.getPoint(), record);
     }
     return hitAnything;
 }
 
 
-Vec3 <double> color(Ray *r, vector <Sphere> &objetosCena, Sphere light, Vec3 <double> coloures) {
+vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
     Hit_record rec;
     double perc;
     if(hit(r, objetosCena, 99999.0, rec, perc, light, coloures)) {
-        Vec3 <double> N = rec.normal;
-        Vec3 <double> v = coloures.operator*(perc); 
+        vec3 N = rec.normal;
+        vec3 v = coloures.operator*(perc); 
         return v;
     } else {
-        Vec3 <double> background(123, 45, 140);
+        vec3 background(123, 45, 140);
         return background;
     }
 }
@@ -71,42 +72,49 @@ Vec3 <double> color(Ray *r, vector <Sphere> &objetosCena, Sphere light, Vec3 <do
 
 int main(){
     
-    Vec3 <double> camPos(0, 0, 0);
-    Vec3 <double> camTarget(0, 0, -1);
-    Vec3 <double> camUp(0, 1, 0);
-    Vec3 <double> Ecenter(0, 0, -15);
-    Vec3 <double> Ecenter2(5, -5, -25);
-    Vec3 <double> Lcenter (10, -5, -5);
+    vec3 camPos(0, 0, 0);
+    vec3 camTarget(0, 0, -1);
+    vec3 camUp(0, 1, 0);
 
-    Vec3 <double> red(255, 0, 0);
-    Vec3 <double> green(0, 255, 0);
-    Vec3 <double> blue(0, 0, 255);
+    vec3 Ecenter (0, 0, 50);
+    vec3 Ecenter2(-10, 1, -10);
+    vec3 Ecenter3(0, 0, -20);
+    vec3 Lcenter (0, 0, -1);
+
+    vec3 red(255, 0, 0);
+    vec3 green(0, 255, 0);
+    vec3 blue(0, 0, 255);
 
     Material *material1 = new Material(1,1,1,1, red);
     Material *material2 = new Material(1,1,1,1, blue);
+    Material *material3 = new Material(1,1,1,1, green);
 
     int fov = 90;
     double aspect = 1.7;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(1920, 1080);
+    Image *img = new Image(1280, 720);
     Ray *r;
-    Vec3 <double> p;
+    vec3 p;
 
-    Sphere esfera(Ecenter, 6, material1);
-    Sphere esfera2(Ecenter2, 6, material2);
+    Sphere esfera(Ecenter, 1, material1);
+    Sphere esfera2(Ecenter2, 1, material2);
+    Sphere esfera3(Ecenter3, 1, material3);
+
     Sphere light(Lcenter, 0.5, material1);
 
-    Vec3 <double> background(123, 45, 140);
+    vec3 background(123, 45, 140);
     vector <Sphere> objetosCena;
     objetosCena.push_back(esfera);
     objetosCena.push_back(esfera2);
+    objetosCena.push_back(esfera3);
+    //objetosCena.push_back(light);
 
 
     for(int i = 0; i < img->getWidth(); i++) {
         for(int j = 0; j < img->getHeight(); j++) {
             r = cam->GetRay(i, j, img->getWidth(), img->getHeight());
-            Vec3 <double> c = color(r, objetosCena, light, background);
+            vec3 c = color(r, objetosCena, light, background);
             img->SetPixel(i, j, c);
         }
     }
