@@ -2,6 +2,7 @@
 
 #include "ray.cpp"
 #include "hit_record.cpp"
+#include "material.cpp"
 //#include "objectIntersection.cpp"
 #include <cmath>
 
@@ -17,11 +18,13 @@ class Sphere {
     private:
         Vec3 <double> center;
         double radius;
+        Material *material;
     
     public:
-        Sphere(Vec3 <double> center, double radius) {
+        Sphere(Vec3 <double> center, double radius, Material *material) {
             this->center = center;
             this->radius = radius;
+            this->material = material;
         }
 
         bool intersect(double max, Hit_record &rec, Ray *r) {
@@ -69,6 +72,10 @@ class Sphere {
 
         Vec3 <double> getPoint(){
             return this->center;
+        }
+
+        Material* getMaterial(){
+            return this->material;
         }
 
         double getRadius() {
