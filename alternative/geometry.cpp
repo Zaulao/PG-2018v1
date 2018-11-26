@@ -29,13 +29,14 @@ class Sphere {
 
         bool intersect(double max, Hit_record &rec, Ray *r) {
             Vec3 <double> distance = r->getOrigin().operator-(this->center);
-            double a = Vec3<double>::dotProduct(r->getDirection(), r->getDirection());
+            double a = 1;
             double b = 2 * Vec3<double>::dotProduct(distance, r->getDirection());
             double c = Vec3<double>::dotProduct(distance, distance) - (this->radius * this->radius);
             double delta = b * b - 4 * a * c;
             if (delta > 0) {
-                double temp = (-b - sqrt(delta) ) / (2.0 * a);
-                if(temp < max){
+                double temp = (-1 * b - sqrt(delta) ) / (2.0 * a);
+                if( temp > 0 && temp < max){
+                    temp = temp + 0.00000000001;
                     rec.t = temp;
                     rec.p = r->sample(temp);
                     Vec3 <double> op = rec.p.operator-(this->center);
@@ -43,8 +44,9 @@ class Sphere {
                     rec.normal = op;
                     return true;
                 }
-                temp = (-b + sqrt(delta) ) / (2.0 * a);
-                if( temp < max){
+                temp = (-1 * b + sqrt(delta) ) / (2.0 * a);
+                if( temp > 0 && temp < max){
+                    temp = temp + 0.00000000001;
                     rec.t = temp;
                     rec.p = r->sample(temp);
                     Vec3 <double> op = rec.p.operator-(this->center);
@@ -52,7 +54,18 @@ class Sphere {
                     rec.normal = op;
                     return true;
                 }
-            } 
+            } else if ( delta == 0) {
+                double temp = -1 * b / 2 * a;
+                if( temp > 0 && temp < max){
+                temp = temp + 0.00000000001;
+                rec.t = temp;
+                rec.p = r->sample(temp);
+                Vec3 <double> op = rec.p.operator-(this->center);
+                op.normalise();
+                rec.normal = op;
+                return true;
+                }
+            }
             return false;
         }
         
