@@ -37,11 +37,21 @@ vec3 diffuse(Sphere light, Hit_record &rec) {
     }
 }
 
-vec3 specular(Sphere light, Hit_record &rec) {
-    vec3 intersectLight = light.getPoint().operator-(rec.p);
+vec3 reflect(vec3 v, vec3 n) {
+    double dot = Vec3<double>::dotProduct(v, n);
+    dot *= 2;
+    n = n.operator*(dot);
+    v = v.operator-(n);
+    return v;
+}
+
+vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
+    vec3 intersectLight = rec.p.operator-(light.getPoint());
     intersectLight.normalise();
-    double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
-    // return kd * surfaceColor * lightSourceColor * dot;
+    vec3 reflected = reflect(intersectLight, rec.normal);
+    double dot = Vec3<double>::dotProduct(r->getDirection(), reflected);
+    dot = pow(dot, obj.getMaterial()->getAlpha());
+    cout << dot << endl;
     if (dot <= 0) {
         vec3 v(0,0,0);
         return v;
@@ -50,7 +60,7 @@ vec3 specular(Sphere light, Hit_record &rec) {
     }
 }
 
-bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, vec3 &perc, Sphere light, vec3 &colores) {
+bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, vec3 &perc, vec3 &especular, Sphere light, vec3 &colores) {
     Hit_record record;
     bool hitAnything = false;
     double closest = tmax;
@@ -70,11 +80,16 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             index = i;
         }
     }
-    if (notShadow) {
-        //vec3 light(10, -15, -5);
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
         colores = colores.operator+(perc);
+        especular = specular(light, record, r, objetosCena.at(index));
+        especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
+        especular.display();
+        colores = colores.operator+(especular);
+    if (notShadow) {
+        //vec3 light(10, -15, -5);
+
     }
     return hitAnything;
 }
@@ -84,9 +99,7 @@ vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
     Hit_record rec;
     vec3 difusa;
     vec3 especular;
-    vec3 ambiente;
-    vec3 perc;
-    if(hit(r, objetosCena, 99999.0, rec, perc, light, coloures)) {
+    if(hit(r, objetosCena, 99999.0, rec, difusa, especular, light, coloures)) {
         vec3 v = coloures;
         return v;
     } else {
@@ -102,7 +115,7 @@ int main(){
     vec3 camTarget(0, 0, -1);
     vec3 camUp(0, 1, 0);
 
-    vec3 Ecenter (0, 0, 50); //red
+    vec3 Ecenter (-5, -3, -50); //red
     vec3 Ecenter2(5, -3, -4); //blue
     vec3 Ecenter3(0, 0, -10); //green
 
@@ -114,10 +127,12 @@ int main(){
     vec3 brown(94, 58, 66);
     vec3 white(255,255,255);
 
-    Material *material1 = new Material(0.3,1,1,1, red);
-    Material *material2 = new Material(0.2,0.45,1,1, blue);
-    Material *material3 = new Material(0.1,0.5,1,1, green);
-    Material *material4 = new Material(0.3,0.35,1,1, brown);
+//double ke, double kd, double ks, double alpha, Vec3 <double> color
+
+    Material *material1 = new Material(0,0,1,0., red);
+    Material *material2 = new Material(0,0,0.1,0.1, blue);
+    Material *material3 = new Material(0,0,0.82,0.75, green);
+    Material *material4 = new Material(0,0,1,1, brown);
     Material *luz = new Material(1,1,1,1, white);
 
     int fov = 75;
