@@ -77,42 +77,47 @@ vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
 
 int main(){
     
-    vec3 camPos(0, 0, 5);
+    vec3 camPos(0, 0, 10);
     vec3 camTarget(0, 0, -1);
     vec3 camUp(0, 1, 0);
 
-    vec3 Ecenter (0, 0, 50);
-    vec3 Ecenter2(-6, 0, -5);
-    vec3 Ecenter3(0, 0, -5);
-    vec3 Lcenter (3, 0, -5);
+    vec3 Ecenter (0, 0, 50); //red
+    vec3 Ecenter2(5, -3, -4); //blue
+    vec3 Ecenter3(0, 0, -10); //green
+
+    vec3 Lcenter (5, -5, -2);
 
     vec3 red(255, 0, 0);
     vec3 green(0, 255, 0);
     vec3 blue(0, 0, 255);
+    vec3 brown(94, 58, 66);
 
     Material *material1 = new Material(1,1,1,1, red);
     Material *material2 = new Material(1,1,1,1, blue);
     Material *material3 = new Material(1,1,1,1, green);
+    Material *material4 = new Material(1,1,1,1, brown);
 
     int fov = 75;
-    double aspect = 1.5;
+    double aspect = 1.7;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(1200, 800);
+    Image *img = new Image(1280, 720);
     Ray *r;
     vec3 p;
 
     Sphere esfera(Ecenter, 1, material1);
-    Sphere esfera2(Ecenter2, 3, material2);
-    Sphere esfera3(Ecenter3, 0.5, material3);
+    Sphere esfera2(Ecenter2, 1, material2);
+    Sphere esfera3(Ecenter3, 6, material3);
+    Sphere esferaGigante (vec3(0,10010,0), 10000, material4);
 
-    Sphere light(Lcenter, 3, material1);
+    Sphere light(Lcenter, 0.5, material1);
 
     vec3 background(123, 45, 140);
     vector <Sphere> objetosCena;
     objetosCena.push_back(esfera);
     objetosCena.push_back(esfera2);
     objetosCena.push_back(esfera3);
+    objetosCena.push_back(esferaGigante);
     //objetosCena.push_back(light);
 
 
