@@ -34,8 +34,8 @@ class Sphere {
             double c = Vec3<double>::dotProduct(distance, distance) - (this->radius * this->radius);
             double delta = b * b - 4 * a * c;
             if (delta > 0) {
-                double temp = (-b - sqrt(delta) ) / (2.0 * a);
-                if(temp > 0 && temp < max){
+                double temp = (-1 * b - sqrt(delta) ) / (2.0 * a);
+                if(temp > 0.1 && temp < max){
                     temp += 0.000000001;
                     rec.t = temp;
                     rec.p = r->sample(temp);
@@ -44,8 +44,8 @@ class Sphere {
                     rec.normal = op;
                     return true;
                 }
-                temp = (-b + sqrt(delta) ) / (2.0 * a);
-                if(temp > 0 && temp < max){
+                temp = (-1 * b + sqrt(delta) ) / (2.0 * a);
+                if(temp > 0.1 && temp < max){
                     temp += 0.000000001;
                     rec.t = temp;
                     rec.p = r->sample(temp);
@@ -54,7 +54,18 @@ class Sphere {
                     rec.normal = op;
                     return true;
                 }
-            } 
+            } else if ( delta == 0) {
+                double temp = -1 * b / 2 * a;
+                if( temp > 0 && temp < max){
+                temp = temp + 0.00000000001;
+                rec.t = temp;
+                rec.p = r->sample(temp);
+                Vec3 <double> op = rec.p.operator-(this->center);
+                op.normalise();
+                rec.normal = op;
+                return true;
+                }
+            }
             return false;
         }
         
