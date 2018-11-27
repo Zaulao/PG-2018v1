@@ -24,23 +24,38 @@ bool notshadow(Ray *r, vector<Sphere> &objetosCena, Sphere light) {
     return true;
 }
 
-double diffuse(vec3 lightSource, Hit_record &rec) {
-    vec3 intersectLight = lightSource.operator-(rec.p);
+vec3 diffuse(Sphere light, Hit_record &rec) {
+    vec3 intersectLight = light.getPoint().operator-(rec.p);
     intersectLight.normalise();
     double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
     // return kd * surfaceColor * lightSourceColor * dot;
     if (dot <= 0) {
-        return 0;
+        vec3 v(0,0,0);
+        return v;
     } else {
-        return dot;
+        return light.getMaterial()->getColor().operator*(dot);
     }
 }
 
-bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, double &perc, Sphere light, vec3 &colores) {
+vec3 specular(Sphere light, Hit_record &rec) {
+    vec3 intersectLight = light.getPoint().operator-(rec.p);
+    intersectLight.normalise();
+    double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
+    // return kd * surfaceColor * lightSourceColor * dot;
+    if (dot <= 0) {
+        vec3 v(0,0,0);
+        return v;
+    } else {
+        return light.getMaterial()->getColor().operator*(dot);
+    }
+}
+
+bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, vec3 &perc, Sphere light, vec3 &colores) {
     Hit_record record;
     bool hitAnything = false;
     double closest = tmax;
     bool notShadow = true;
+    int index = 0;
     for (int i = 0; i < objetosCena.size(); i++) {
         if (objetosCena.at(i).intersect(closest, record, r)) {
             hitAnything = true;
@@ -51,12 +66,15 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, do
             l.normalise();
             Ray *normal = new Ray(record.p, l);
             notShadow = notshadow(normal, objetosCena, light);
-            colores = objetosCena.at(i).getMaterial()->getColor();
+            colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
+            index = i;
         }
     }
     if (notShadow) {
         //vec3 light(10, -15, -5);
-        perc = diffuse(light.getPoint(), record);
+        perc = diffuse(light, record);
+        perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
+        colores = colores.operator+(perc);
     }
     return hitAnything;
 }
@@ -64,12 +82,15 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, do
 
 vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
     Hit_record rec;
-    double perc = 0;
+    vec3 difusa;
+    vec3 especular;
+    vec3 ambiente;
+    vec3 perc;
     if(hit(r, objetosCena, 99999.0, rec, perc, light, coloures)) {
-        vec3 v = coloures.operator*(perc); 
+        vec3 v = coloures;
         return v;
     } else {
-        vec3 background(123, 45, 140);
+        vec3 background(0, 0, 0);
         return background;
     }
 }
@@ -91,11 +112,13 @@ int main(){
     vec3 green(0, 255, 0);
     vec3 blue(0, 0, 255);
     vec3 brown(94, 58, 66);
+    vec3 white(255,255,255);
 
-    Material *material1 = new Material(1,1,1,1, red);
-    Material *material2 = new Material(1,1,1,1, blue);
-    Material *material3 = new Material(1,1,1,1, green);
-    Material *material4 = new Material(1,1,1,1, brown);
+    Material *material1 = new Material(0.3,1,1,1, red);
+    Material *material2 = new Material(0.2,0.45,1,1, blue);
+    Material *material3 = new Material(0.1,0.5,1,1, green);
+    Material *material4 = new Material(0.3,0.35,1,1, brown);
+    Material *luz = new Material(1,1,1,1, white);
 
     int fov = 75;
     double aspect = 1.7;
@@ -110,7 +133,7 @@ int main(){
     Sphere esfera3(Ecenter3, 6, material3);
     Sphere esferaGigante (vec3(0,10010,0), 10000, material4);
 
-    Sphere light(Lcenter, 0.5, material1);
+    Sphere light(Lcenter, 0.5, luz);
 
     vec3 background(123, 45, 140);
     vector <Sphere> objetosCena;
