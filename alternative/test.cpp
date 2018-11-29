@@ -268,7 +268,7 @@ int main(){
     double aspect = 1.7;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(1280, 720);
+    Image *img = new Image(res["w"], res["h"]);
     Ray *r;
     vec3 p;
 
