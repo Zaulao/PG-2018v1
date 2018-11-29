@@ -1,0 +1,16 @@
+#comentário
+
+#resolução
+res 1280 720
+
+#câmera
+camera 0 0 10 0 0 -1 0 1 0 75 
+
+#materiais
+material name 12.3 12.3 5.3 6.5 1000.2 -3 -4.5312
+
+#objetos
+sphere 7.8 4.5 1.2 12.3 plastico
+mesh file.obj materialName
+
+/Users/edenernandes/Desktop/PG-2018v1/alternative/file.txt
