@@ -74,14 +74,14 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             l.normalise();
             Ray *normal = new Ray(record.p, l);
             notShadow = notshadow(normal, objetosCena, light);
-            colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
+            //colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
             index = i;
         }
     }
     if (notShadow) {
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
-        colores = colores.operator+(perc);
+        //colores = colores.operator+(perc);
         especular = specular(light, record, r, objetosCena.at(index));
         especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
         //especular.display();
@@ -129,7 +129,7 @@ int main(){
     vec3 Ecenter2(5, -3, -4); //blue
     vec3 Ecenter3(0, 0, -10); //green
 
-    vec3 Lcenter (5, -5, -2);
+    vec3 Lcenter (0,-25, 10);
 
     vec3 red(255, 0, 0);
     vec3 green(0, 255, 0);

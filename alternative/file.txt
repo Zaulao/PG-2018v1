@@ -14,5 +14,3 @@ sphere 7.8 4.5 1.2 12.3 plastico
 
 mesh file.obj materialName
 
-/Users/edenernandes/Desktop/PG-2018v1/alternative/file.txt
-
