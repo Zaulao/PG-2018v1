@@ -4,7 +4,7 @@
 #include "camera.cpp"
 #include "ray.cpp"
 #include "cmath"
-#include <fstream>
+#include "reader.cpp"
 #include <map>
 
 using namespace std;
@@ -48,17 +48,14 @@ vec3 reflect(vec3 v, vec3 n) {
 
 vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
     vec3 intersectLight = rec.p.operator-(light.getPoint());
+    //vec3 intersectLight =  
     intersectLight.normalise();
     vec3 reflected = reflect(intersectLight, rec.normal);
+    reflected.normalise();
     double dot = Vec3<double>::dotProduct(r->getDirection(), reflected);
+    dot = max(0.0, dot);
     dot = pow(dot, obj.getMaterial()->getAlpha());
-    cout << dot << endl;
-    if (dot <= 0) {
-        vec3 v(0, 0, 0);
-        return v;
-    } else {
-        return light.getMaterial()->getColor().operator*(dot);
-    }
+    return light.getMaterial()->getColor().operator*(dot);    
 }
 
 bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, vec3 &perc, vec3 &especular, Sphere light, vec3 &colores) {
@@ -77,7 +74,7 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             l.normalise();
             Ray *normal = new Ray(record.p, l);
             notShadow = notshadow(normal, objetosCena, light);
-            //colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
+            colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
             index = i;
         }
     }
@@ -85,12 +82,12 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
         colores = colores.operator+(perc);
-        //especular = specular(light, record, r, objetosCena.at(index));
-        //especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
-       // especular.display();
+        especular = specular(light, record, r, objetosCena.at(index));
+        especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
+        //especular.display();
         //vec3 opa (252, 178, 5);
         //especular = opa;
-        //colores = colores.operator+(especular);
+        colores = colores.operator+(especular);
         //vec3 light(10, -15, -5);
 
     }
@@ -107,145 +104,28 @@ vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
         return v;
     } else {
         vec3 background(123, 45, 140);
-        return background;
+        return coloures;
     }
 }
 
 
 int main(){
 
-    fstream reader;
-    reader.open("file.txt");
-    string s;
     map <string, double> res;
     map <string, double> camera;
     map <string, double> material;
-    string material_name;
-    string material_name_sphere;
     map <string, double> objetos;
-
-    reader >> s;
-    while(reader.good()){
-        reader >> s;
-        if(s == "#resolução"){
-            //2 e 3
-            reader >> s;
-            for(int i = 2; i <=3; i++){
-                reader >> s;
-                switch(i){
-                    case 2:
-                        res["w"] = atof(s.c_str());
-                        break;
-                    case 3:
-                        res["h"] = atof(s.c_str());
-                        break;
-                }       
-            }
-        }else if(s == "#câmera"){
-            // 2 a 12
-            reader >> s;
-            for(int i = 2; i <= 12; i++){
-                reader >> s;
-                switch(i){
-                    case 2:
-                        camera["px"] = atof(s.c_str());
-                        break;
-                    case 3:
-                        camera["py"] = atof(s.c_str());
-                        break;
-                    case 4:
-                        camera["pz"] = atof(s.c_str());
-                        break;
-                    case 5:
-                        camera["tx"] = atof(s.c_str());
-                        break;
-                    case 6:
-                        camera["ty"] = atof(s.c_str());
-                        break;
-                    case 7:
-                        camera["tz"] = atof(s.c_str());
-                        break;
-                    case 8:
-                        camera["ux"] = atof(s.c_str());
-                        break;
-                    case 9:
-                        camera["uy"] = atof(s.c_str());
-                        break;
-                    case 10:
-                        camera["uz"] = atof(s.c_str());
-                        break;
-                    case 11:
-                        camera["fov"] = atof(s.c_str());
-                        break;
-                    case 12:
-                        camera["f"] = atof(s.c_str());
-                        break;
-
-                }
-            }
-        }else if(s == "#materiais"){
-            //2 a 8
-            reader >> s;
-            for(int i = 2; i <= 9; i++){
-                reader >> s;
-                switch(i){
-                    case 2: 
-                        material_name = s;
-                        break;
-                    case 3:
-                        material["r"] = atof(s.c_str()); 
-                        break;
-                    case 4:
-                        material["g"] = atof(s.c_str()); 
-                        break;
-                    case 5:
-                        material["b"] = atof(s.c_str()); 
-                        break;
-                    case 6:
-                        material["kd"] = atof(s.c_str()); 
-                        break;
-                    case 7:
-                        material["ks"] = atof(s.c_str()); 
-                        break;
-                    case 8:
-                        material["ke"] = atof(s.c_str()); 
-                        break;
-                    case 9:
-                        material["alpha"] = atof(s.c_str());
-                }
-            }
-        }else if(s == "#objetos"){
-            //2 a 6
-            reader >> s;
-            for(int i = 2; i <= 6; i++){
-                reader >> s;
-                switch(i){
-                    case 2:
-                        objetos["cx"] = atof(s.c_str());
-                        break;
-                    case 3:
-                        objetos["cy"] = atof(s.c_str());
-                        break;
-                    case 4:
-                        objetos["cz"] = atof(s.c_str());
-                        break;
-                    case 5:
-                        objetos["r"] = atof(s.c_str());
-                        break;
-                    case 6:
-                        material_name_sphere = s;
-                        break;
-                }
-            }
-
-        }
-    }
     
-    vec3 camPos(camera["px"], camera["py"], camera["pz"]);
-    vec3 camTarget(camera["tx"], camera["ty"], camera["tz"]);
-    vec3 camUp(camera["ux"], camera["uy"], camera["uz"]);
+    Reader *aux = new Reader(res, camera, material, objetos);
+    Reader *data = new Reader(res, camera, material, objetos);
+    data = aux->read_file();
+    //cout << data->camera["pz"] << endl;
 
-    vec3 Ecenter (-5, -3, -50); //red
+    vec3 camPos(data->camera["px"], data->camera["py"], data->camera["pz"]);
+    vec3 camTarget(data->camera["tx"], data->camera["ty"], data->camera["tz"]);
+    vec3 camUp(data->camera["ux"], data->camera["uy"], data->camera["uz"]);
+
+    vec3 Ecenter (0, 0, 10); //red
     vec3 Ecenter2(5, -3, -4); //blue
     vec3 Ecenter3(0, 0, -10); //green
 
@@ -259,17 +139,18 @@ int main(){
 
 //double ke, double kd, double ks, double alpha, Vec3 <double> color
 
-    Material *material1 = new Material(0.6,0.5,1,0.1, red);
-    Material *material2 = new Material(0.6,0.5,0.1,0.1, blue);
-    Material *material3 = new Material(0.6,0.82,0.75, 0.1, green);
-    Material *material4 = new Material(0.6,0.5,1,1, brown);
+    Material *material1 = new Material(data->material["r_ke"],data->material["r_kd"],data->material["r_ks"] ,data->material["r_alpha"] , vec3(data->material["r_r"],data->material["r_g"],data->material["r_b"]));
+    Material *material2 = new Material(0.5,0.5,0.1,0.1, blue);
+    Material *material3 = new Material(0.8,0.5,0.82,0.75, green);
+    Material *material4 = new Material(0.5,0.5,1,1, brown);
     Material *luz = new Material(1,1,1,1, white);
 
-    int fov = camera["fov"];
+    int fov = data->camera["fov"];
     double aspect = 1.7;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(res["w"], res["h"]);
+    Image *img = new Image(data->res["w"],data->res["h"]);
+    //cout << data->res["w"] << " " << data->res["h"] << endl;
     Ray *r;
     vec3 p;
 
@@ -280,7 +161,8 @@ int main(){
 
     Sphere light(Lcenter, 0.5, luz);
 
-    vec3 background(123, 45, 140);
+    //vec3 background(123, 45, 140);
+    vec3 background (0,0,0);
     vector <Sphere> objetosCena;
     objetosCena.push_back(esfera);
     objetosCena.push_back(esfera2);
