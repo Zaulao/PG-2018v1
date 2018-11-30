@@ -74,14 +74,14 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             l.normalise();
             Ray *normal = new Ray(record.p, l);
             notShadow = notshadow(normal, objetosCena, light);
-            //colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
+            colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
             index = i;
         }
     }
     if (notShadow) {
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
-        //colores = colores.operator+(perc);
+        colores = colores.operator+(perc);
         especular = specular(light, record, r, objetosCena.at(index));
         especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
         //especular.display();
@@ -125,11 +125,11 @@ int main(){
     vec3 camTarget(data->camera["tx"], data->camera["ty"], data->camera["tz"]);
     vec3 camUp(data->camera["ux"], data->camera["uy"], data->camera["uz"]);
 
-    vec3 Ecenter (0, 0, 10); //red
-    vec3 Ecenter2(5, -3, -4); //blue
+    vec3 Ecenter (-13, 0, -10); //red
+    vec3 Ecenter2(13, 0, -10); //blue
     vec3 Ecenter3(0, 0, -10); //green
 
-    vec3 Lcenter (0,-25, 10);
+    vec3 Lcenter (0,-150, -10);
 
     vec3 red(255, 0, 0);
     vec3 green(0, 255, 0);
@@ -138,11 +138,12 @@ int main(){
     vec3 white(255,255,255);
 
 //double ke, double kd, double ks, double alpha, Vec3 <double> color
+    vec3 test (data->material["red_r"],data->material["red_g"],data->material["red_b"]); 
 
-    Material *material1 = new Material(data->material["r_ke"],data->material["r_kd"],data->material["r_ks"] ,data->material["r_alpha"] , vec3(data->material["r_r"],data->material["r_g"],data->material["r_b"]));
-    Material *material2 = new Material(0.5,0.5,0.1,0.1, blue);
-    Material *material3 = new Material(0.8,0.5,0.82,0.75, green);
-    Material *material4 = new Material(0.5,0.5,1,1, brown);
+    Material *material1 = new Material(data->material["red_ke"],data->material["red_kd"],data->material["red_ks"] ,data->material["red_alpha"] , red);
+    Material *material2 = new Material(0.5,0.5,0.5,50, blue);
+    Material *material3 = new Material(0.8,0.5,0.82,50,green);
+    Material *material4 = new Material(0.5,0.5,1,100000, vec3(138, 17, 219));
     Material *luz = new Material(1,1,1,1, white);
 
     int fov = data->camera["fov"];
@@ -154,15 +155,16 @@ int main(){
     Ray *r;
     vec3 p;
 
-    Sphere esfera(Ecenter, 1, material1);
-    Sphere esfera2(Ecenter2, 1, material2);
+    Sphere esfera(Ecenter, 6, material1);
+    Sphere esfera2(Ecenter2, 6, material2);
     Sphere esfera3(Ecenter3, 6, material3);
     Sphere esferaGigante (vec3(0,10010,0), 10000, material4);
 
     Sphere light(Lcenter, 0.5, luz);
 
     //vec3 background(123, 45, 140);
-    vec3 background (0,0,0);
+    vec3 background(149, 229, 249);
+    //vec3 background (0,0,0);
     vector <Sphere> objetosCena;
     objetosCena.push_back(esfera);
     objetosCena.push_back(esfera2);
