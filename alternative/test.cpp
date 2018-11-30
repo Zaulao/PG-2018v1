@@ -47,8 +47,8 @@ vec3 reflect(vec3 v, vec3 n) {
 }
 
 vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
-    vec3 intersectLight = rec.p.operator-(light.getPoint());
-    //vec3 intersectLight =  
+    //vec3 intersectLight = rec.p.operator-(light.getPoint());
+    vec3 intersectLight =  light.getPoint().operator-(rec.p);
     intersectLight.normalise();
     vec3 reflected = reflect(intersectLight, rec.normal);
     reflected.normalise();
