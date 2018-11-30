@@ -8,7 +8,8 @@ class Material{
         Vec3 <double> color;
 
     public:
-        Material(double ke, double kd, double ks, double alpha, Vec3 <double> color){
+    //material(r g b kd ks ke alpha)
+        Material(Vec3 <double> color, double kd, double ks, double ke, double alpha){
             this->ke = ke;
             this->kd = kd;
             this->ks = ks;

@@ -53,7 +53,7 @@ vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
     vec3 reflected = reflect(intersectLight, rec.normal);
     double dot = Vec3<double>::dotProduct(r->getDirection(), reflected);
     dot = pow(dot, obj.getMaterial()->getAlpha());
-    //cout << dot << endl;
+    cout << dot << endl;
     if (dot <= 0) {
         vec3 v(0,0,0);
         return v;
@@ -141,18 +141,18 @@ int main(){
     vec3 white(255,255,255);
 
 //double ke, double kd, double ks, double alpha, Vec3 <double> color
+//material(r g b kd ks ke alpha)
+    Material *material1 = new Material(vec3(data->material["red_r"],data->material["red_g"],data->material["red_b"]), data->material["red_kd"],data->material["red_ks"],data->material["red_ke"] ,data->material["red_alpha"]);
+    Material *material2 = new Material(vec3(data->material["blue_r"],data->material["blue_g"],data->material["blue_b"]), data->material["blue_kd"],data->material["blue_ks"],data->material["blue_ke"] ,data->material["blue_alpha"]);
+    Material *material3 = new Material(vec3(data->material["green_r"],data->material["green_g"],data->material["green_b"]), data->material["green_kd"],data->material["green_ks"],data->material["green_ke"] ,data->material["green_alpha"]);
+    Material *material4 = new Material(brown,0,0,1,1);
+    Material *luz = new Material(white,1,1,1,1);
 
-    Material *material1 = new Material(data->material["r_ke"],data->material["r_kd"],data->material["r_ks"] ,data->material["r_alpha"] , vec3(data->material["r_r"],data->material["r_g"],data->material["r_b"]));
-    Material *material2 = new Material(0,0,0.1,0.1, blue);
-    Material *material3 = new Material(0,0,0.82,0.75, green);
-    Material *material4 = new Material(0,0,1,1, brown);
-    Material *luz = new Material(1,1,1,1, white);
-
-    int fov = camera["fov"];
+    int fov = data->camera["fov"];
     double aspect = 1.7;
     double near = 1;
     Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(res["w"], res["h"]);
+    Image *img = new Image(data->res["w"], data->res["h"]);
     Ray *r;
     vec3 p;
 

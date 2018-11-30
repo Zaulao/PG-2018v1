@@ -22,6 +22,7 @@ class Reader {
 
         Reader *read_file(){
             string s;
+            int count = 0;
             fstream reader;
             reader.open("file.txt");
             reader >> s;
@@ -112,24 +113,26 @@ class Reader {
                                 this->material[material_name+"_alpha"] = atof(s.c_str());
                         }
                     }
-                }else if(s == "#objetos"){
+                }else if(s == "#objetos" || s == "sphere"){
                     //2 a 6
+                    if(s == "sphere") count++;
+                  //  string concat = (string) count;
                     reader >> s;
                     string material_name_obj;
                     for(int i = 2; i <= 6; i++){
                         reader >> s;
                         switch(i){
                             case 2:
-                                this->objetos["cx"] = atof(s.c_str());
+                                this->objetos["sphere_"+to_string(count)+"cx"] = atof(s.c_str());
                                 break;
                             case 3:
-                                this->objetos["cy"] = atof(s.c_str());
+                                this->objetos["sphere_"+to_string(count)+"cy"] = atof(s.c_str());
                                 break;
                             case 4:
-                                this->objetos["cz"] = atof(s.c_str());
+                                this->objetos["sphere_"+to_string(count)+"cz"] = atof(s.c_str());
                                 break;
                             case 5:
-                                this->objetos["r"] = atof(s.c_str());
+                                this->objetos["sphere_"+to_string(count)+"r"] = atof(s.c_str());
                                 break;
                             case 6:
                                 material_name_obj = s;

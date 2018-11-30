@@ -7,12 +7,17 @@ res 1280 720
 camera 0 0 10 0 0 -1 0 1 0 75 
 
 #materiais
-material red 1 0 0 0 1 0 0 
+material red 255 0 0 0 1 0 0
+material blue 0 0 255 0 0.1 0 0.1 
+material green 0 255 0 0 0.82 0 0.75
+
 
 #objetos
-sphere 7.8 4.5 1.2 12.3 plastico
+sphere -5 -3 -50 1 material1
+
 
 mesh file.obj materialName
 
-/Users/edenernandes/Desktop/PG-2018v1/alternative/file.txt
 
+name r g b kd ks ke alpha //como tem que ser 
+       alpha vec3(r,g,b)
