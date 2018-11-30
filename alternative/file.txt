@@ -4,20 +4,21 @@
 res 1280 720
 
 #câmera
-camera 0 0 10 0 0 -1 0 1 0 75 
+camera 0 0 20 0 0 -1 0 1 0 90 1 
 
 #materiais
-material red 255 0 0 0 1 0 0
-material blue 0 0 255 0 0.1 0 0.1 
-material green 0 255 0 0 0.82 0 0.75
+material red 255 0 0 0.5 0.82 0.8 50
+material green 0 255 0 0.5 0.82 0.8 50
+material blue 0 0 255 0.5 0.82 0.8 50
+material rose 138 17 219 0.5 1 0.5 100000
 
 
 #objetos
-sphere -5 -3 -50 1 material1
+sphere -13 0 -10 6 material1
+sphere 13 0 -10 6 material2
+sphere 0 0 -10 6 material3
+sphere 0 10010 0 10000 material4
 
 
 mesh file.obj materialName
 
-
-name r g b kd ks ke alpha //como tem que ser 
-       alpha vec3(r,g,b)

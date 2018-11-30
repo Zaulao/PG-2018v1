@@ -30,7 +30,6 @@ vec3 diffuse(Sphere light, Hit_record &rec) {
     vec3 intersectLight = light.getPoint().operator-(rec.p);
     intersectLight.normalise();
     double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
-    // return kd * surfaceColor * lightSourceColor * dot;
     if (dot <= 0) {
         vec3 v(0,0,0);
         return v;
@@ -48,18 +47,14 @@ vec3 reflect(vec3 v, vec3 n) {
 }
 
 vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
-    vec3 intersectLight = rec.p.operator-(light.getPoint());
+    vec3 intersectLight =  light.getPoint().operator-(rec.p);
     intersectLight.normalise();
     vec3 reflected = reflect(intersectLight, rec.normal);
+    reflected.normalise();
     double dot = Vec3<double>::dotProduct(r->getDirection(), reflected);
+    dot = max(0.0, dot);
     dot = pow(dot, obj.getMaterial()->getAlpha());
-    cout << dot << endl;
-    if (dot <= 0) {
-        vec3 v(0,0,0);
-        return v;
-    } else {
-        return light.getMaterial()->getColor().operator*(dot);
-    }
+    return light.getMaterial()->getColor().operator*(dot);    
 }
 
 bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, vec3 &perc, vec3 &especular, Sphere light, vec3 &colores) {
@@ -82,18 +77,16 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             index = i;
         }
     }
+    if (notShadow) {
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
         colores = colores.operator+(perc);
         especular = specular(light, record, r, objetosCena.at(index));
         especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
-       // especular.display();
         colores = colores.operator+(especular);
-    if (notShadow) {
-        //vec3 light(10, -15, -5);
-
+       
     }
-    return hitAnything;
+    return hitAnything; 
 }
 
 
@@ -105,8 +98,8 @@ vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
         vec3 v = coloures;
         return v;
     } else {
-        vec3 background(0, 0, 0);
-        return background;
+        vec3 background(123, 45, 140);
+        return coloures;
     }
 }
 
@@ -121,57 +114,41 @@ int main(){
     Reader *aux = new Reader(res, camera, material, objetos);
     Reader *data = new Reader(res, camera, material, objetos);
     data = aux->read_file();
-    cout << data->camera["px"] << endl;
-    
-
     vec3 camPos(data->camera["px"], data->camera["py"], data->camera["pz"]);
     vec3 camTarget(data->camera["tx"], data->camera["ty"], data->camera["tz"]);
     vec3 camUp(data->camera["ux"], data->camera["uy"], data->camera["uz"]);
-
-    vec3 Ecenter (-5, -3, -50); //red
-    vec3 Ecenter2(5, -3, -4); //blue
-    vec3 Ecenter3(0, 0, -10); //green
-
-    vec3 Lcenter (5, -5, -2);
-
-    vec3 red(255, 0, 0);
-    vec3 green(0, 255, 0);
-    vec3 blue(0, 0, 255);
-    vec3 brown(94, 58, 66);
+    vec3 Lcenter (0, -150, -10);
     vec3 white(255,255,255);
 
-//double ke, double kd, double ks, double alpha, Vec3 <double> color
 //material(r g b kd ks ke alpha)
     Material *material1 = new Material(vec3(data->material["red_r"],data->material["red_g"],data->material["red_b"]), data->material["red_kd"],data->material["red_ks"],data->material["red_ke"] ,data->material["red_alpha"]);
     Material *material2 = new Material(vec3(data->material["blue_r"],data->material["blue_g"],data->material["blue_b"]), data->material["blue_kd"],data->material["blue_ks"],data->material["blue_ke"] ,data->material["blue_alpha"]);
     Material *material3 = new Material(vec3(data->material["green_r"],data->material["green_g"],data->material["green_b"]), data->material["green_kd"],data->material["green_ks"],data->material["green_ke"] ,data->material["green_alpha"]);
-    Material *material4 = new Material(brown,0,0,1,1);
+    Material *material4 = new Material(vec3(data->material["rose_r"],data->material["rose_g"],data->material["rose_b"]), data->material["rose_kd"],data->material["rose_ks"],data->material["rose_ke"] ,data->material["rose_alpha"]);
     Material *luz = new Material(white,1,1,1,1);
 
-    int fov = data->camera["fov"];
-    double aspect = 1.7;
-    double near = 1;
-    Camera *cam = new Camera(camPos, camTarget, camUp, fov, near, aspect);
-    Image *img = new Image(data->res["w"], data->res["h"]);
+
+    double aspect = data->res["w"]/data->res["h"];
+    Camera *cam = new Camera(camPos, camTarget, camUp, data->camera["fov"], data->camera["f"], 1.7); //falta ajeitar o aspect pra ser calculado pelo que vem do objeto 
+    Image *img = new Image(data->res["w"],data->res["h"]);
     Ray *r;
     vec3 p;
 
-    Sphere esfera(Ecenter, 1, material1);
-    Sphere esfera2(Ecenter2, 1, material2);
-    Sphere esfera3(Ecenter3, 6, material3);
-    Sphere esferaGigante (vec3(0,10010,0), 10000, material4);
+    Sphere esfera(vec3(data->objetos["sphere0_cx"],data->objetos["sphere0_cy"],data->objetos["sphere0_cz"]), data->objetos["sphere0_r"], material1);
+    Sphere esfera2(vec3(data->objetos["sphere1_cx"],data->objetos["sphere1_cy"],data->objetos["sphere1_cz"]), data->objetos["sphere1_r"], material2);
+    Sphere esfera3(vec3(data->objetos["sphere2_cx"],data->objetos["sphere2_cy"],data->objetos["sphere2_cz"]), data->objetos["sphere2_r"], material3);
+    Sphere esferaGigante (vec3(data->objetos["sphere3_cx"],data->objetos["sphere3_cy"],data->objetos["sphere3_cz"]), data->objetos["sphere3_r"], material4);
 
     Sphere light(Lcenter, 0.5, luz);
 
-    vec3 background(123, 45, 140);
+    //vec3 background(123, 45, 140);
+    vec3 background (149,229,249);
     vector <Sphere> objetosCena;
     objetosCena.push_back(esfera);
     objetosCena.push_back(esfera2);
     objetosCena.push_back(esfera3);
     objetosCena.push_back(esferaGigante);
-    //objetosCena.push_back(light);
-
-
+    
     for(int i = 0; i < img->getWidth(); i++) {
         for(int j = 0; j < img->getHeight(); j++) {
             r = cam->GetRay(i, j, img->getWidth(), img->getHeight());
