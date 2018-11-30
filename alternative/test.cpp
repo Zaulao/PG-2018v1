@@ -30,7 +30,6 @@ vec3 diffuse(Sphere light, Hit_record &rec) {
     vec3 intersectLight = light.getPoint().operator-(rec.p);
     intersectLight.normalise();
     double dot = Vec3<double>::dotProduct(rec.normal, intersectLight);
-    // return kd * surfaceColor * lightSourceColor * dot;
     if (dot <= 0) {
         vec3 v(0,0,0);
         return v;
@@ -55,7 +54,7 @@ vec3 specular(Sphere light, Hit_record &rec, Ray *r, Sphere obj) {
     dot = pow(dot, obj.getMaterial()->getAlpha());
     cout << dot << endl;
     if (dot <= 0) {
-        vec3 v(0,0,0);
+        vec3 v(0, 0, 0);
         return v;
     } else {
         return light.getMaterial()->getColor().operator*(dot);
@@ -78,18 +77,20 @@ bool hit (Ray *r, vector <Sphere> &objetosCena, double tmax, Hit_record &rec, ve
             l.normalise();
             Ray *normal = new Ray(record.p, l);
             notShadow = notshadow(normal, objetosCena, light);
-            colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
+            //colores = objetosCena.at(i).getMaterial()->getColor().operator*(objetosCena.at(i).getMaterial()->getKe());
             index = i;
         }
     }
+    if (notShadow) {
         perc = diffuse(light, record);
         perc = perc.operator*(objetosCena.at(index).getMaterial()->getKd());
         colores = colores.operator+(perc);
-        especular = specular(light, record, r, objetosCena.at(index));
-        especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
+        //especular = specular(light, record, r, objetosCena.at(index));
+        //especular = especular.operator*(objetosCena.at(index).getMaterial()->getKs());
        // especular.display();
-        colores = colores.operator+(especular);
-    if (notShadow) {
+        //vec3 opa (252, 178, 5);
+        //especular = opa;
+        //colores = colores.operator+(especular);
         //vec3 light(10, -15, -5);
 
     }
@@ -105,7 +106,7 @@ vec3 color(Ray *r, vector <Sphere> &objetosCena, Sphere light, vec3 coloures) {
         vec3 v = coloures;
         return v;
     } else {
-        vec3 background(0, 0, 0);
+        vec3 background(123, 45, 140);
         return background;
     }
 }
@@ -258,10 +259,10 @@ int main(){
 
 //double ke, double kd, double ks, double alpha, Vec3 <double> color
 
-    Material *material1 = new Material(0,0,1,0., red);
-    Material *material2 = new Material(0,0,0.1,0.1, blue);
-    Material *material3 = new Material(0,0,0.82,0.75, green);
-    Material *material4 = new Material(0,0,1,1, brown);
+    Material *material1 = new Material(0.6,0.5,1,0.1, red);
+    Material *material2 = new Material(0.6,0.5,0.1,0.1, blue);
+    Material *material3 = new Material(0.6,0.82,0.75, 0.1, green);
+    Material *material4 = new Material(0.6,0.5,1,1, brown);
     Material *luz = new Material(1,1,1,1, white);
 
     int fov = camera["fov"];
