@@ -4,7 +4,7 @@
 res 1280 720
 
 #câmera
-camera 0 0 20 0 0 -1 0 1 0 90 1 
+camera 30 0 20 -17 0 -1 0 1 0 90 1 
 
 #materiais
 material red 255 0 0 0.5 0.82 0.8 50

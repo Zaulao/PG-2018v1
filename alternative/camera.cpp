@@ -23,8 +23,8 @@ class Camera{
             target.normalise();
             up.normalise();
             this->axisZ = target;
-            this->axisX = Vec3<double>::crossProduct(up, target);
-            this->axisY = Vec3<double>::crossProduct(target, this->axisX);
+            this->axisX = Vec3<double>::crossProduct(target, up);
+            this->axisY = Vec3<double>::crossProduct(this->axisX, target);
             this->near = near;
         }
 
@@ -38,11 +38,16 @@ class Camera{
  
         Ray* GetRay(double x, double y, int width, int height){
             Vec3 <double> point = this->position;
+            point = point.operator+(this->axisZ.operator*(this->near));
+            point = point.operator-(this->axisX.operator*(this->horizontal/2));
+            point = point.operator-(this->axisY.operator*(this->vertical/2));
             double camPosX = x * this->horizontal / width;
             double camPosY = y * this->vertical / height;
-            point.setZ(point.getZ() - this->near);
-            point.setX((point.getX() - this->horizontal/2) + camPosX);
-            point.setY((point.getY() - this->vertical/2) + camPosY);
+            point = point.operator+(this->axisX.operator*(camPosX));
+            point = point.operator+(this->axisY.operator*(camPosY));
+            // point.setZ(point.getZ() - this->near);
+            // point.setX((point.getX() - this->horizontal/2) + camPosX);
+            // point.setY((point.getY() - this->vertical/2) + camPosY);
             Vec3 <double> dir = point.operator-(this->position);
             dir.normalise();
             Ray *ray = new Ray(point, dir);

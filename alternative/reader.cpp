@@ -61,6 +61,9 @@ class Reader {
                                 this->camera["tx"] = atof(s.c_str());
                                 break;
                             case 6:
+                                this->camera["ty"] = atof(s.c_str());
+                                break;
+                            case 7:
                                 this->camera["tz"] = atof(s.c_str());
                                 break;
                             case 8:
